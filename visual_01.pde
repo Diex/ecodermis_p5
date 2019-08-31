@@ -36,15 +36,6 @@ void setup() {
   requestAlbum();
   createSlices();
 
-  //universal.add(new Skin("01.jpg", ""));
-  //universal.add(new Skin("02.jpg", ""));
-  //universal.add(new Skin("03.jpg", ""));
-  //universal.add(new Skin("01.jpg", ""));
-  //universal.add(new Skin("02.jpg", ""));
-  //universal.add(new Skin("03.jpg", ""));
-  //universal.add(new Skin("01.jpg", ""));
-  //uskin.addNewSkin(new Skin("02.jpg", ""));
-
   //frameRate(25);
   noCursor();
   loop();
@@ -92,7 +83,7 @@ void requestAlbum() {
   GetRequest get = new GetRequest("https://api.imgur.com/3/album/"+ecodermisAlbumId+"/images?perPage=12");
   get.addHeader("Authorization", "Client-ID 9c48ba5baf1e548");
   get.send(); 
-  //println("Reponse Content: " + get.getContent());
+  println("Reponse Content: ");
   response = parseJSONObject(get.getContent());
   processRequest(response);
   //
@@ -100,7 +91,8 @@ void requestAlbum() {
 
 void processRequest(JSONObject response) {
   JSONArray imgs = response.getJSONArray("data");    
-  for (int i = 0; i < imgs.size(); i++) {
+  
+  for (int i = imgs.size() - 1; i > imgs.size() - 20; i--) {   
     JSONObject imgdata = imgs.getJSONObject(i);    
     String link = imgdata.getString("link");
     String desc = imgdata.isNull("description") ? "not_share" : imgdata.getString("description");        
@@ -110,11 +102,13 @@ void processRequest(JSONObject response) {
       continue;
     }
 
+
     newUskin = true;
     lastSkin = millis();
       
     if (desc.equals("not_share")) {
       skins.add(new Skin(link, desc));
+      changeSlices();
     } else {      
       uskin.addNewSkin(new Skin(link, desc));
     }
@@ -123,9 +117,7 @@ void processRequest(JSONObject response) {
 
 boolean isNewImage(String link) {
   if (links.indexOf(link) == -1) {
-
     links.add(link);
-
     return true;
   } else {
     return false;
@@ -142,8 +134,9 @@ void createSlices() {
 
 public void changeSlices() {  
   if (skins != null && skins.size() > 0) {
+    if(skins.size() > 12 ) skins.remove(skins.size()-1); //remuevo los ultimos...
     for(int w = 0; w < slices.size(); w++){
-    Skin item = skins.get(w % skins.size());
+      Skin item = skins.get(w);
     slices.get(w).switchImage(item.img);
     }
     
