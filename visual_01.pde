@@ -89,9 +89,8 @@ void requestAlbum() {
   //
 }
 
-void processRequest(JSONObject response) {
+void processRequest(JSONObject response) {  
   JSONArray imgs = response.getJSONArray("data");    
-  
   for (int i = imgs.size() - 1; i > imgs.size() - 20; i--) {   
     JSONObject imgdata = imgs.getJSONObject(i);    
     String link = imgdata.getString("link");
@@ -134,7 +133,8 @@ void createSlices() {
 
 public void changeSlices() {  
   if (skins != null && skins.size() > 0) {
-    if(skins.size() > 12 ) skins.remove(skins.size()-1); //remuevo los ultimos...
+    
+    if(skins.size() > 12 ) skins.remove(0); //remuevo los ultimos...
     for(int w = 0; w < slices.size(); w++){
       Skin item = skins.get(w);
     slices.get(w).switchImage(item.img);
